@@ -11,7 +11,7 @@ import CoreData
 class NoteTableViewController: UITableViewController {
     
     var notes = [Note]()
-    var manageObjectContext : NSManagedObjectContext{
+    var manageObjectContext : NSManagedObjectContext?{
         return(UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     }
     
@@ -40,7 +40,7 @@ class NoteTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "noteTableViewCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "noteTableViewCell", for: indexPath) as! NoteTableViewCell
         let note : Note = notes[indexPath.row]
         cell.configerCell(note: note)
         cell.backgroundColor = UIColor.clear
@@ -59,24 +59,25 @@ class NoteTableViewController: UITableViewController {
         tableView.reloadData()
     }
 
-    func returnNotes(){
-        manageObjectContext.perform {
-            self.fetchNotesFromCoreData{ (notes) in
-                if let notes = notes{
+    func returnNotes() {
+        manageObjectContext?.perform {
+            
+            self.fetchNotesFromCoreData { (notes) in
+               // if let notes = notes{
                     self.notes = notes
                     self.tableView.reloadData()
-                }
+            //    }
             }
         }
     }
     
     func fetchNotesFromCoreData(completion: @escaping([Note]) -> Void) {
-        manageObjectContext.perform {
+        manageObjectContext?.perform {
             var notes = [Note]()
             let request : NSFetchRequest<Note> = Note.fetchRequest()
             
             do{
-                notes = try self.manageObjectContext.fetch(request)
+                notes = try self.manageObjectContext!.fetch(request)
                 completion(notes)
             }catch{
                 print("sorry we cant load data :\(error.localizedDescription)")

@@ -21,7 +21,7 @@ class ViewController: UIViewController ,UITextFieldDelegate,UINavigationControll
         return(UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     }
     
-    var notesFetchedResultController: NSFetchedResultsController<Note>
+    var notesFetchedResultController: NSFetchedResultsController<Note>!
     var notes = [Note]()
     var note: Note?
     var isExisting = false
@@ -113,6 +113,126 @@ class ViewController: UIViewController ,UITextFieldDelegate,UINavigationControll
         
     }
     
+    @IBAction func saveButtonWasPressed(_ sender: UIBarButtonItem) {
+        if noteNameLabel.text == "" || noteNameLabel.text == "NOTE NAME" || noteDescriptionLabel.text == "" || noteDescriptionLabel.text == "Note Description....." {
+            let alertController = UIAlertController(title: "Missing Information", message: "You let one or more fields empty. Please make sure that all fields are filled", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Dismiss", style: .default, handler: nil)
+            
+            alertController.addAction(okAction)
+            
+            self.present(alertController,animated: true, completion: nil)
+        }else{
+            if (isExisting == false) {
+                let noteName = noteNameLabel.text
+                let noteDiscription = noteDescriptionLabel.text
+                
+                if let moc  = managedObjectContext{
+                    let note = Note(context: moc)
+                    
+                    let imagedata = UIImage()
+                    if let data = imagedata.jpegData(compressionQuality: 0.75){
+                        note.noteImage = data as Data
+                    }
+                    
+                    note.noteName  = noteName
+                    note.noteDescription = noteDiscription
+                    
+                    saveCoreData {
+                        let ispresentingInAddNoteMode = self.presentingViewController is UINavigationController
+                        
+                        if ispresentingInAddNoteMode{
+                            self.dismiss(animated: true, completion: nil)
+                        }else{
+                            self.navigationController!.popViewController(animated: true)
+                        }
+                    }
+                }
+            }
+            else if (isExisting == true){
+                let note = self.note
+                
+                let managedObject = note
+                managedObject!.setValue(noteNameLabel.text, forKey: "noteName")
+                managedObject!.setValue(noteDescriptionLabel.text, forKey: "noteDescription")
+                
+                let imagedata = UIImage()
+                if let data = imagedata.jpegData(compressionQuality: 0.75){
+                    managedObject!.setValue(data, forKey: "noteImage")
+                }
+                do{
+                    try context.save()
+                    
+                    let ispresentingInAddNoteMode = self.presentingViewController is UINavigationController
+                    
+                    if ispresentingInAddNoteMode{
+                        self.dismiss(animated: true, completion: nil)
+                    }else{
+                        self.navigationController!.popViewController(animated: true)
+                    }
+                }
+                catch{
+                    print("failed to update saved note")
+                }
+            }
+        }
+    }
+
+    @IBAction func cancelButton(_ sender: UIBarButtonItem) {
+        let ispresentingInAddNoteMode = self.presentingViewController is UINavigationController
+        
+        if ispresentingInAddNoteMode{
+            self.dismiss(animated: true, completion: nil)
+        }else{
+            self.navigationController!.popViewController(animated: true)
+            
+        }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return false
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if (text == "\n"){
+            textView.resignFirstResponder()
+        }
+        return false
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if(textView.text == "Note Description....."){
+            textView.text =  ""
+        }
+    }
+        
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        self.dismiss(animated: true, completion: nil)
+        
+        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage{
+            self.noteImage.image = image
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
 }
+
+extension UITextField{
+    func setBottomBorder(){
+        self.borderStyle = .none
+        self.layer.backgroundColor = UIColor.white.cgColor
+        
+        self.layer.masksToBounds = false
+        self.layer.shadowColor = UIColor(red: 245.0/255.0, green: 79.0/255.0, blue: 80.0/255.0, alpha: 1.0).cgColor
+        self.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+        self.layer.shadowOpacity = 1.0
+        self.layer.shadowRadius = 0.0
+        
+    }
+}
+
 
 

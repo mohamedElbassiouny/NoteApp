@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="58s-TA-0vu">
     <device id="retina6_1" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -128,8 +128,16 @@
                         <viewLayoutGuide key="safeArea" id="uWI-iB-pyW"/>
                     </view>
                     <navigationItem key="navigationItem" title="NOTE DETAILS" id="Z7b-Qj-CUk">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="8zF-KF-RpS"/>
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="sTQ-t8-lmp"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="8zF-KF-RpS">
+                            <connections>
+                                <action selector="cancelButton:" destination="Ra8-xY-K0q" id="Crx-3A-7wZ"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="sTQ-t8-lmp">
+                            <connections>
+                                <action selector="saveButtonWasPressed:" destination="Ra8-xY-K0q" id="Bxy-Te-TDd"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="noteDescriptionLabel" destination="n5D-mA-AvG" id="t2t-MP-vEN"/>
@@ -164,7 +172,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rq1-vn-aPf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="30.434782608695656" y="-13.392857142857142"/>
+            <point key="canvasLocation" x="-114" y="-13"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Whl-Q9-uor">
